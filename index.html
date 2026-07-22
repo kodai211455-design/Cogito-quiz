@@ -1,31 +1,113 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>単語テスト</title>
-<style>
-body{font-family:sans-serif;background:#eef5ff;margin:0;padding:20px}
-.card{max-width:900px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px #0002}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-input,button{padding:8px;font-size:16px}
-#quiz{display:none}
-</style></head><body><div class="card">
-<h1>単語テスト</h1>
-<div id="setup"><div class="grid" id="grid"></div><br><button onclick="start()">開始</button></div>
-<div id="quiz">
-<p id="prog"></p><h2 id="q"></h2>
-<input id="ans" placeholder="意味を入力"><button onclick="check()">答え合わせ</button>
-<p id="res"></p><button id="next" onclick="nextQ()" style="display:none">次へ</button>
-</div></div>
-<script>
-const g=document.getElementById('grid');
-for(let i=1;i<=20;i++){g.insertAdjacentHTML('beforeend',`<input id=t${i} placeholder="単語${i}"><input id=m${i} placeholder="意味${i}">`)}
-let qs=[],order=[],idx=0,score=0;
-function start(){
-qs=[];for(let i=1;i<=20;i++){let t=t=document.getElementById('t'+i).value.trim(),m=document.getElementById('m'+i).value.trim();if(t&&m)qs.push({t,m});}
-if(qs.length==0){alert("問題を入力してください");return;}
-order=[...qs.keys()].sort(()=>Math.random()-0.5);idx=0;score=0;
-setup.style.display="none";quiz.style.display="block";show();}
-function show(){let o=qs[order[idx]];prog.textContent=`${idx+1}/${order.length}`;q.textContent=o.t;ans.value="";res.textContent="";next.style.display="none";ans.focus();}
-function check(){let o=qs[order[idx]];if(ans.value.trim()===o.m){score++;res.innerHTML="⭕ 正解";}else{res.innerHTML="❌ 不正解<br>正解："+o.m;}next.style.display="inline";}
-function nextQ(){idx++;if(idx>=order.length){quiz.innerHTML=`<h2>終了！</h2><p>${score}/${order.length}点</p><button onclick="location.reload()">もう一度</button>`;}else show();}
-ans.addEventListener('keydown',e=>{if(e.key==="Enter"){if(next.style.display==="inline")nextQ();else check();}});
-</script></body></html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cogito Study v0.1</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <h1>📚 Cogito Study</h1>
+    <p>Ver.0.1</p>
+</header>
+
+<main>
+
+    <!-- ホーム画面 -->
+    <section id="home">
+
+        <h2>単語帳一覧</h2>
+
+        <button id="newNotebookBtn">
+            ＋ 新しい範囲を作る
+        </button>
+
+        <div id="notebookList">
+
+            <!-- JavaScriptで追加 -->
+
+        </div>
+
+    </section>
+
+
+    <!-- 編集画面 -->
+    <section id="editor" style="display:none;">
+
+        <button id="backButton">
+            ← ホームへ戻る
+        </button>
+
+        <h2>範囲編集</h2>
+
+        <label>
+            範囲名
+        </label>
+
+        <input
+            type="text"
+            id="notebookTitle"
+            placeholder="例：Lesson5"
+        >
+
+        <hr>
+
+        <h3>単語（一括入力）</h3>
+
+        <p>
+            1行につき
+            <br>
+            英語,日本語
+        </p>
+
+        <textarea
+            id="wordInput"
+            rows="10"
+            placeholder="apple,りんご
+book,本
+school,学校">
+        </textarea>
+
+        <button id="importWordsBtn">
+            単語を読み込む
+        </button>
+
+        <div id="wordPreview">
+
+        </div>
+
+        <hr>
+
+        <h3>文章</h3>
+
+        <div id="sentenceList">
+
+        </div>
+
+        <button id="addSentenceBtn">
+            ＋文章を追加
+        </button>
+
+        <hr>
+
+        <button id="saveNotebookBtn">
+            💾 保存
+        </button>
+
+        <button id="deleteNotebookBtn">
+            🗑 この範囲を削除
+        </button>
+
+    </section>
+
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/editor.js"></script>
+
+</body>
+</html>
