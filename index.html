@@ -81,15 +81,26 @@ school,学校">
 
         <hr>
 
-        <h3>文章</h3>
+       <h3>文章（一括入力）</h3>
 
-        <div id="sentenceList">
+<p>
+1行につき
+<br>
+英語,日本語
+</p>
 
-        </div>
+<textarea
+    id="sentenceInput"
+    rows="8"
+    placeholder="I play soccer every day.,私は毎日サッカーをします。
+This is my pen.,これは私のペンです。">
+</textarea>
 
-        <button id="addSentenceBtn">
-            ＋文章を追加
-        </button>
+<button id="importSentencesBtn">
+    文章を読み込む
+</button>
+
+<div id="sentencePreview"></div> 
 
         <hr>
 
