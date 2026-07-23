@@ -169,37 +169,26 @@ function saveCurrentNotebook() {
 ====================================
 イベント
 ====================================
+/*
+====================================
+初期化
+====================================
 */
 
-window.addEventListener("DOMContentLoaded", () => {
+function initializeEditor(notebook){
 
-    const emptyNotebook = addNotebook("新しい範囲");
+    currentNotebook = notebook;
 
-    currentNotebook = emptyNotebook;
+    document.getElementById("notebookTitle").value =
+        notebook.title;
 
-    document
-        .getElementById("notebookTitle")
-        .value = currentNotebook.title;
+    document.getElementById("wordInput").value = "";
 
-    document
-        .getElementById("importWordsBtn")
-        .addEventListener(
-            "click",
-            importWords
-        );
+    document.getElementById("sentenceInput").value = "";
 
-    document
-        .getElementById("importSentencesBtn")
-        .addEventListener(
-            "click",
-            importSentences
-        );
+    updateWordPreview();
 
-    document
-        .getElementById("saveNotebookBtn")
-        .addEventListener(
-            "click",
-            saveCurrentNotebook
-        );
+    updateSentencePreview();
 
-});
+}
+
