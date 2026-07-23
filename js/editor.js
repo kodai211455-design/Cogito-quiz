@@ -181,14 +181,22 @@ function initializeEditor(notebook){
 
     document.getElementById("notebookTitle").value =
         notebook.title;
+    document.getElementById("wordInput").value =
+    notebook.words
+        .map(w => `${w.question},${w.answer}`)
+        .join("\n");
 
-    document.getElementById("wordInput").value = "";
-
-    document.getElementById("sentenceInput").value = "";
-
+document.getElementById("sentenceInput").value =
+    notebook.sentences
+        .map(s => `${s.question},${s.answer}`)
+        .join("\n");
     updateWordPreview();
 
     updateSentencePreview();
 
 }
 
+
+    
+
+        
