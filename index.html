@@ -105,20 +105,56 @@ This is my pen.,これは私のペンです。">
         <hr>
 
         <button id="saveNotebookBtn">
-            💾 保存
-        </button>
+    💾 保存
+</button>
 
-        <button id="deleteNotebookBtn">
-            🗑 この範囲を削除
-        </button>
+<button id="startQuizBtn">
+    ▶ テスト開始
+</button>
+
+<button id="deleteNotebookBtn">
+    🗑 この範囲を削除
+</button>
 
     </section>
+<!-- テスト画面 -->
+<section id="quiz" style="display:none;">
 
+    <button id="backToEditorBtn">
+        ← 編集画面へ戻る
+    </button>
+
+    <h2>単語テスト</h2>
+
+    <p id="quizProgress">
+        問題 1 / 20
+    </p>
+
+    <h3 id="quizQuestion">
+        問題が表示されます
+    </h3>
+
+    <input
+        type="text"
+        id="quizAnswer"
+        placeholder="答えを入力">
+
+    <button id="checkAnswerBtn">
+        答え合わせ
+    </button>
+
+    <p id="quizResult"></p>
+
+    <button id="nextQuestionBtn" style="display:none;">
+        次の問題
+    </button>
+
+</section>
 </main>
-
 <script src="js/app.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/editor.js"></script>
+<script src="js/quiz.js"></script>
 
 </body>
 </html>
