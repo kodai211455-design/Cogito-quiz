@@ -14,10 +14,12 @@ let notebooks = [];
 ====================================
 */
 function showHome() {
+document.getElementById("home").style.display = "block";
+document.getElementById("editor").style.display = "none";
+document.getElementById("quiz").style.display = "none";
+    
 
-    document.getElementById("home").style.display = "block";
-    document.getElementById("editor").style.display = "none";
-
+    
     renderNotebookList();
 
 }
@@ -28,11 +30,25 @@ function showHome() {
 ====================================
 */
 function showEditor(notebook) {
+document.getElementById("home").style.display = "none";
+document.getElementById("editor").style.display = "block";
+document.getElementById("quiz").style.display = "none";
+
+    
+    initializeEditor(notebook);
+
+}
+/*
+====================================
+テスト画面表示
+====================================
+*/
+
+function showQuiz(){
 
     document.getElementById("home").style.display = "none";
-    document.getElementById("editor").style.display = "block";
-
-    initializeEditor(notebook);
+    document.getElementById("editor").style.display = "none";
+    document.getElementById("quiz").style.display = "block";
 
 }
 
@@ -137,6 +153,27 @@ function removeNotebook() {
     showHome();
 
 }
+/*
+====================================
+テスト開始
+====================================
+*/
+
+function startQuiz(){
+
+    if(!currentNotebook){
+
+        alert("範囲がありません。");
+
+        return;
+
+    }
+
+    showQuiz();
+
+    initializeQuiz(currentNotebook);
+
+}
 
 /*
 ====================================
@@ -191,5 +228,18 @@ window.addEventListener("DOMContentLoaded", () => {
             "click",
             importSentences
         );
+    document
+    .getElementById("startQuizBtn")
+    .addEventListener(
+        "click",
+        startQuiz
+    );
+
+　　document
+    .getElementById("backToEditorBtn")
+    .addEventListener(
+        "click",
+        () => showEditor(currentNotebook)
+    );
 
 });
