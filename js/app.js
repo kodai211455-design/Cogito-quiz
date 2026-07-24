@@ -162,12 +162,16 @@ function removeNotebook() {
 */
 function startQuiz() {
 
+    alert("startQuiz開始");
+
     if (!currentNotebook) {
 
         alert("範囲がありません。");
         return;
 
     }
+
+    alert("単語数：" + currentNotebook.words.length);
 
     if (currentNotebook.words.length === 0) {
 
@@ -178,10 +182,13 @@ function startQuiz() {
 
     showQuiz();
 
+    alert("showQuiz完了");
+
     initializeQuiz(currentNotebook);
 
-}
+    alert("initializeQuiz完了");
 
+}
 /*
 ====================================
 イベント登録
