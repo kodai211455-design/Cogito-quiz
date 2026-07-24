@@ -47,6 +47,7 @@ function showEditor(notebook) {
 */
 function showQuiz() {
 
+    document.getElementById("quizAnswer").style.display = "block";
     document.getElementById("home").style.display = "none";
     document.getElementById("editor").style.display = "none";
     document.getElementById("quiz").style.display = "block";
