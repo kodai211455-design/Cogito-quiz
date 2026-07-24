@@ -1,166 +1,505 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cogito Study v0.1</title>
 
-    <link rel="stylesheet" href="css/style.css">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Cogito Study Ver.0.2.1</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
 </head>
+
 <body>
 
+<!-- ==========================
+ヘッダー
+========================== -->
+
 <header>
+
     <h1>📚 Cogito Study</h1>
-    <p>Ver.0.2</p>
+
+    <p>
+
+        Ver.0.2.1
+
+    </p>
+
 </header>
 
 <main>
 
-    <!-- ホーム画面 -->
-    <section id="home">
+<!-- ==========================
+ホーム画面
+========================== -->
 
-        <h2>単語帳一覧</h2>
+<section id="home">
 
-        <button id="newNotebookBtn">
-            ＋ 新しい範囲を作る
-        </button>
+    <h2>
 
-        <div id="notebookList">
+        単語帳一覧
 
-            <!-- JavaScriptで追加 -->
+    </h2>
 
-        </div>
+    <p>
 
-    </section>
+        範囲を選択してください。
 
+    </p>
 
-    <!-- 編集画面 -->
-    <section id="editor" style="display:none;">
+    <button id="newNotebookBtn">
 
-        <button id="backButton">
-            ← ホームへ戻る
-        </button>
+        ＋ 新しい範囲を作る
 
-        <h2>範囲編集</h2>
+    </button>
 
-        <label>
-            範囲名
-        </label>
+    <div id="notebookList">
 
-        <input
-            type="text"
-            id="notebookTitle"
-            placeholder="例：Lesson5"
-        >
+        <!-- JavaScript -->
 
-        <hr>
+    </div>
 
-        <h3>単語（一括入力）</h3>
+</section>
+<!-- ==========================
+編集画面
+========================== -->
 
-        <p>
-            1行につき
-            <br>
-            英語,日本語
-        </p>
+<section id="editor" style="display:none;">
 
-        <textarea
-            id="wordInput"
-            rows="10"
-            placeholder="apple,りんご
-book,本
-school,学校">
-        </textarea>
+    <button id="backButton">
+        ← ホームへ戻る
+    </button>
 
-        <button id="importWordsBtn">
-            単語を読み込む
-        </button>
+    <h2>
+        範囲編集
+    </h2>
 
-        <div id="wordPreview">
+    <label for="notebookTitle">
+        範囲名
+    </label>
 
-        </div>
+    <input
+        id="notebookTitle"
+        type="text"
+        placeholder="例：Lesson5">
 
-        <hr>
+    <hr>
 
-       <h3>文章（一括入力）</h3>
+    <!-- ======================
+    単語・熟語
+    ======================= -->
 
-<p>
-1行につき
-<br>
-英語,日本語
-</p>
+    <h3>
+        単語・熟語
+    </h3>
 
-<textarea
-    id="sentenceInput"
-    rows="8"
-    placeholder="I play soccer every day.,私は毎日サッカーをします。
+    <p>
+
+        1行につき
+
+        <br>
+
+        英語,日本語
+
+    </p>
+
+    <p>
+
+        例
+
+        <br>
+
+        apple,りんご
+
+        <br>
+
+        look forward to,～を楽しみにしている
+
+        <br>
+
+        be interested in,～に興味がある
+
+    </p>
+
+    <textarea
+
+        id="wordInput"
+
+        rows="10"
+
+        placeholder="apple,りんご
+look forward to,～を楽しみにしている
+be interested in,～に興味がある">
+
+    </textarea>
+
+    <button id="importWordsBtn">
+
+        📥 単語・熟語を読み込む
+
+    </button>
+
+    <div id="wordPreview">
+
+    </div>
+
+    <hr>
+
+    <!-- ======================
+    文章
+    ======================= -->
+
+    <h3>
+
+        文章
+
+    </h3>
+
+    <p>
+
+        1行につき
+
+        <br>
+
+        英語,日本語
+
+    </p>
+
+    <textarea
+
+        id="sentenceInput"
+
+        rows="8"
+
+        placeholder="I play soccer every day.,私は毎日サッカーをします。
 This is my pen.,これは私のペンです。">
-</textarea>
 
-<button id="importSentencesBtn">
-    文章を読み込む
-</button>
+    </textarea>
 
-<div id="sentencePreview"></div> 
+    <button id="importSentencesBtn">
 
-        <hr>
+        📥 文章を読み込む
+
+    </button>
+
+    <div id="sentencePreview">
+
+    </div>
+
+    <hr>
+
+    <!-- ======================
+    ボタン
+    ======================= -->
+
+    <div class="editorButtons">
 
         <button id="saveNotebookBtn">
-    💾 保存
-</button>
 
-<button id="startQuizBtn">
-    ▶ テスト開始
-</button>
+            💾 保存
 
-<button id="deleteNotebookBtn">
-    🗑 この範囲を削除
-</button>
+        </button>
 
-    </section>
-<!-- テスト画面 -->
-<section id="quiz" style="display:none;">
+        <button id="startQuizBtn">
 
-    <button id="backToEditorBtn">
+            📝 テスト設定へ
+
+        </button>
+
+        <button id="deleteNotebookBtn">
+
+            🗑 この範囲を削除
+
+        </button>
+
+    </div>
+
+</section>
+<!-- ==========================
+テスト設定画面
+========================== -->
+
+<section id="quizSettings" style="display:none;">
+
+    <button id="backToEditorFromSettingsBtn">
         ← 編集画面へ戻る
     </button>
 
+    <h2>
+        📝 テスト設定
+    </h2>
 
+    <hr>
 
-    <h2>単語テスト</h2>
+    <!-- 出題方向 -->
 
-<p id="quizMode">
-    単語問題
-</p>
-
-<p id="quizProgress">
-    問題 1 / 20
-</p>
-
-    <h3 id="quizQuestion">
-        問題が表示されます
+    <h3>
+        出題方向
     </h3>
 
-    <input
-        type="text"
-        id="quizAnswer"
-        placeholder="答えを入力">
+    <label>
+        <input
+            type="radio"
+            name="quizDirection"
+            value="jpToEn"
+            checked>
 
-    <button id="checkAnswerBtn">
-        答え合わせ
-    </button>
+        日本語 → 英語
+    </label>
 
-    <p id="quizResult"></p>
+    <br>
 
-    <button id="nextQuestionBtn" style="display:none;">
-        次の問題
+    <label>
+        <input
+            type="radio"
+            name="quizDirection"
+            value="enToJp">
+
+        英語 → 日本語
+    </label>
+
+    <hr>
+
+    <!-- ヒント -->
+
+    <h3>
+        ヒント
+    </h3>
+
+    <label>
+
+        <input
+            type="radio"
+            name="hintMode"
+            value="none"
+            checked>
+
+        表示しない
+
+    </label>
+
+    <br>
+
+    <label>
+
+        <input
+            type="radio"
+            name="hintMode"
+            value="first">
+
+        各単語の頭文字だけ表示
+
+    </label>
+
+    <br>
+
+    <label>
+
+        <input
+            type="radio"
+            name="hintMode"
+            value="first2">
+
+        各単語の最初2文字を表示
+
+    </label>
+
+    <hr>
+
+    <!-- 問題数 -->
+
+    <h3>
+        問題数
+    </h3>
+
+    <label>
+
+        <input
+            type="radio"
+            name="questionCount"
+            value="all"
+            checked>
+
+        全問題
+
+    </label>
+
+    <br>
+
+    <label>
+
+        <input
+            type="radio"
+            name="questionCount"
+            value="10">
+
+        10問
+
+    </label>
+
+    <br>
+
+    <label>
+
+        <input
+            type="radio"
+            name="questionCount"
+            value="20">
+
+        20問
+
+    </label>
+
+    <hr>
+
+    <!-- シャッフル -->
+
+    <h3>
+        出題順
+    </h3>
+
+    <label>
+
+        <input
+            type="checkbox"
+            id="shuffleQuestions"
+            checked>
+
+        ランダムに出題する
+
+    </label>
+
+    <hr>
+
+    <!-- 将来追加予定 -->
+
+    <details>
+
+        <summary>
+
+            今後追加予定の機能
+
+        </summary>
+
+        <ul>
+
+            <li>間違えた問題だけ復習</li>
+
+            <li>並べ替え問題</li>
+
+            <li>全文入力問題</li>
+
+            <li>制限時間</li>
+
+            <li>文章問題</li>
+
+        </ul>
+
+    </details>
+
+    <br>
+
+    <button id="beginQuizBtn">
+
+        ▶ テスト開始
+
     </button>
 
 </section>
-</main>
-<script src="js/app.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/editor.js"></script>
-<script src="js/quiz.js"></script>
+<!-- ==========================
+テスト画面
+========================== -->
 
-</body>
-</html>
+<section id="quiz" style="display:none;">
+
+    <button id="backToSettingsBtn">
+        ← テスト設定へ戻る
+    </button>
+
+    <h2 id="quizTitle">
+        📝 単語テスト
+    </h2>
+
+    <p id="quizMode">
+        日本語 → 英語
+    </p>
+
+    <p id="quizProgress">
+        問題 1 / 20
+    </p>
+
+    <hr>
+
+    <div class="questionArea">
+
+        <h3>
+            問題
+        </h3>
+
+        <div id="quizQuestion" class="questionText">
+            問題が表示されます
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="hintArea">
+
+        <h3>
+            ヒント
+        </h3>
+
+        <div id="quizHint" class="hintText">
+
+            （ヒントなし）
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="answerArea">
+
+        <h3>
+            答え
+        </h3>
+
+        <input
+            type="text"
+            id="quizAnswer"
+            autocomplete="off"
+            placeholder="ここに入力">
+
+    </div>
+
+    <br>
+
+    <button id="checkAnswerBtn">
+
+        ✅ 答え合わせ
+
+    </button>
+
+    <button
+        id="nextQuestionBtn"
+        style="display:none;">
+
+        ▶ 次の問題
+
+    </button>
+
+    <div id="quizResult">
+
+    </div>
+
+</section>
