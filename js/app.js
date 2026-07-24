@@ -1,6 +1,6 @@
 /*
 ====================================
-Cogito Study v0.2
+Cogito Study v0.2.1
 app.js
 画面管理
 ====================================
@@ -17,6 +17,7 @@ function showHome() {
 
     document.getElementById("home").style.display = "block";
     document.getElementById("editor").style.display = "none";
+    document.getElementById("quizSettings").style.display = "none";
     document.getElementById("quiz").style.display = "none";
 
     renderNotebookList();
@@ -34,9 +35,24 @@ function showEditor(notebook) {
 
     document.getElementById("home").style.display = "none";
     document.getElementById("editor").style.display = "block";
+    document.getElementById("quizSettings").style.display = "none";
     document.getElementById("quiz").style.display = "none";
 
     initializeEditor(notebook);
+
+}
+
+/*
+====================================
+テスト設定画面表示
+====================================
+*/
+function showQuizSettings() {
+
+    document.getElementById("home").style.display = "none";
+    document.getElementById("editor").style.display = "none";
+    document.getElementById("quizSettings").style.display = "block";
+    document.getElementById("quiz").style.display = "none";
 
 }
 
@@ -48,8 +64,10 @@ function showEditor(notebook) {
 function showQuiz() {
 
     document.getElementById("quizAnswer").style.display = "block";
+
     document.getElementById("home").style.display = "none";
     document.getElementById("editor").style.display = "none";
+    document.getElementById("quizSettings").style.display = "none";
     document.getElementById("quiz").style.display = "block";
 
 }
@@ -69,7 +87,9 @@ function renderNotebookList() {
 
     if (notebooks.length === 0) {
 
-        list.innerHTML = "<p>まだ範囲がありません。</p>";
+        list.innerHTML =
+            "<p>まだ範囲がありません。</p>";
+
         return;
 
     }
@@ -82,7 +102,7 @@ function renderNotebookList() {
 
         card.innerHTML = `
             <h3>${notebook.title}</h3>
-            <p>単語：${notebook.words.length}問</p>
+            <p>単語・熟語：${notebook.words.length}問</p>
             <p>文章：${notebook.sentences.length}問</p>
         `;
 
@@ -105,7 +125,8 @@ function renderNotebookList() {
 */
 function createNotebook() {
 
-    const title = prompt("範囲名を入力してください");
+    const title =
+        prompt("範囲名を入力してください");
 
     if (!title) return;
 
@@ -157,38 +178,44 @@ function removeNotebook() {
 
 /*
 ====================================
-テスト開始
+テスト設定へ
 ====================================
 */
 function startQuiz() {
 
-    alert("startQuiz開始");
-
     if (!currentNotebook) {
 
         alert("範囲がありません。");
+
         return;
 
     }
-
-    alert("単語数：" + currentNotebook.words.length);
 
     if (currentNotebook.words.length === 0) {
 
-        alert("単語が登録されていません。");
+        alert("単語・熟語が登録されていません。");
+
         return;
 
     }
 
-    showQuiz();
+    showQuizSettings();
 
-    alert("showQuiz完了");
+}
+
+/*
+====================================
+テスト開始
+====================================
+*/
+function beginQuiz() {
+
+    showQuiz();
 
     initializeQuiz(currentNotebook);
 
-    alert("initializeQuiz完了");
-
 }
+
 /*
 ====================================
 イベント登録
@@ -200,28 +227,48 @@ window.addEventListener("DOMContentLoaded", () => {
 
     showHome();
 
-    document.getElementById("newNotebookBtn")
+    document
+        .getElementById("newNotebookBtn")
         .addEventListener("click", createNotebook);
 
-    document.getElementById("backButton")
+    document
+        .getElementById("backButton")
         .addEventListener("click", showHome);
 
-    document.getElementById("saveNotebookBtn")
+    document
+        .getElementById("saveNotebookBtn")
         .addEventListener("click", saveNotebook);
 
-    document.getElementById("deleteNotebookBtn")
+    document
+        .getElementById("deleteNotebookBtn")
         .addEventListener("click", removeNotebook);
 
-    document.getElementById("startQuizBtn")
+    document
+        .getElementById("startQuizBtn")
         .addEventListener("click", startQuiz);
 
-    document.getElementById("backToEditorBtn")
+    document
+        .getElementById("beginQuizBtn")
+        .addEventListener("click", beginQuiz);
+
+    document
+        .getElementById("backToEditorBtn")
         .addEventListener("click", () => showEditor(currentNotebook));
 
-    document.getElementById("importWordsBtn")
+    document
+        .getElementById("backToEditorFromSettingsBtn")
+        .addEventListener("click", () => showEditor(currentNotebook));
+
+    document
+        .getElementById("backToSettingsBtn")
+        .addEventListener("click", showQuizSettings);
+
+    document
+        .getElementById("importWordsBtn")
         .addEventListener("click", importWords);
 
-    document.getElementById("importSentencesBtn")
+    document
+        .getElementById("importSentencesBtn")
         .addEventListener("click", importSentences);
 
 });
