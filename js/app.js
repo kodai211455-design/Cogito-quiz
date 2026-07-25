@@ -1,6 +1,6 @@
 /*
 ====================================
-Cogito Study v0.2.1
+Cogito Study Ver.3
 app.js
 画面管理
 ====================================
@@ -8,17 +8,53 @@ app.js
 
 let notebooks = [];
 
+let currentNotebook = null;
+
 /*
 ====================================
-ホーム画面表示
+全画面を非表示
 ====================================
 */
+
+function hideAllScreens() {
+
+    const screens = [
+
+        "homeScreen",
+
+        "editorScreen",
+
+        "settingsScreen",
+
+        "quizScreen",
+
+        "resultScreen"
+
+    ];
+
+    screens.forEach(id => {
+
+        document
+            .getElementById(id)
+            .style.display = "none";
+
+    });
+
+}
+
+/*
+====================================
+ホーム画面
+====================================
+*/
+
 function showHome() {
 
-    document.getElementById("home").style.display = "block";
-    document.getElementById("editor").style.display = "none";
-    document.getElementById("quizSettings").style.display = "none";
-    document.getElementById("quiz").style.display = "none";
+    hideAllScreens();
+
+    document
+        .getElementById("homeScreen")
+        .style.display = "block";
 
     renderNotebookList();
 
@@ -26,91 +62,144 @@ function showHome() {
 
 /*
 ====================================
-編集画面表示
+編集画面
 ====================================
 */
+
 function showEditor(notebook) {
 
     currentNotebook = notebook;
 
-    document.getElementById("home").style.display = "none";
-    document.getElementById("editor").style.display = "block";
-    document.getElementById("quizSettings").style.display = "none";
-    document.getElementById("quiz").style.display = "none";
+    hideAllScreens();
 
-    initializeEditor(notebook);
+    document
+        .getElementById("editorScreen")
+        .style.display = "block";
+
+    initializeEditor(
+
+        currentNotebook
+
+    );
 
 }
 
 /*
 ====================================
-テスト設定画面表示
+テスト設定画面
 ====================================
 */
+
 function showQuizSettings() {
 
-    document.getElementById("home").style.display = "none";
-    document.getElementById("editor").style.display = "none";
-    document.getElementById("quizSettings").style.display = "block";
-    document.getElementById("quiz").style.display = "none";
-
-}
-
-/*
-====================================
-テスト画面表示
-====================================
-*/
-function showQuiz() {
-
-    document.getElementById("quizAnswer").style.display = "block";
-
-    document.getElementById("home").style.display = "none";
-    document.getElementById("editor").style.display = "none";
-    document.getElementById("quizSettings").style.display = "none";
-    document.getElementById("quiz").style.display = "block";
-
-}
-
-/*
-====================================
-単語帳一覧表示
-====================================
-*/
-function renderNotebookList() {
-
-    notebooks = loadData();
-
-    const list = document.getElementById("notebookList");
-
-    list.innerHTML = "";
-
-    if (notebooks.length === 0) {
-
-        list.innerHTML =
-            "<p>まだ範囲がありません。</p>";
+    if (!currentNotebook) {
 
         return;
 
     }
 
+    hideAllScreens();
+
+    document
+        .getElementById("settingsScreen")
+        .style.display = "block";
+
+    initializeSettings(
+
+        currentNotebook
+
+    );
+
+}
+
+/*
+====================================
+テスト画面
+====================================
+*/
+
+function showQuiz() {
+
+    hideAllScreens();
+
+    document
+        .getElementById("quizScreen")
+        .style.display = "block";
+
+}
+
+/*
+====================================
+結果画面
+====================================
+*/
+
+function showResultScreen() {
+
+    hideAllScreens();
+
+    document
+        .getElementById("resultScreen")
+        .style.display = "block";
+
+}
+/*
+====================================
+ホーム画面更新
+====================================
+*/
+
+function renderNotebookList() {
+
+    notebooks = loadData();
+
+    const currentArea =
+        document.getElementById("currentNotebook");
+
+    const list =
+        document.getElementById("notebookList");
+
+    currentArea.innerHTML = "";
+
+    list.innerHTML = "";
+
+    /*
+    ================================
+    今週の範囲
+    ================================
+    */
+
+    const current = getCurrentNotebook();
+
+    if (current) {
+
+        const card = createNotebookCard(
+
+            current,
+
+            true
+
+        );
+
+        currentArea.appendChild(card);
+
+    }
+
+    /*
+    ================================
+    一覧
+    ================================
+    */
+
     notebooks.forEach(notebook => {
 
-        const card = document.createElement("div");
+        const card = createNotebookCard(
 
-        card.className = "notebook";
+            notebook,
 
-        card.innerHTML = `
-            <h3>${notebook.title}</h3>
-            <p>単語・熟語：${notebook.words.length}問</p>
-            <p>文章：${notebook.sentences.length}問</p>
-        `;
+            false
 
-        card.addEventListener("click", () => {
-
-            showEditor(notebook);
-
-        });
+        );
 
         list.appendChild(card);
 
@@ -120,34 +209,163 @@ function renderNotebookList() {
 
 /*
 ====================================
-新しい範囲作成
+カード作成
 ====================================
 */
-function createNotebook() {
 
-    const title =
-        prompt("範囲名を入力してください");
+function createNotebookCard(
 
-    if (!title) return;
+    notebook,
 
-    const notebook = addNotebook(title);
+    isCurrent
 
-    notebooks = loadData();
+) {
 
-    showEditor(notebook);
+    const card =
+        document.createElement("div");
+
+    card.className =
+
+        isCurrent
+
+        ? "card current-card"
+
+        : "card";
+
+    card.innerHTML = `
+
+        <h3>
+
+            ${notebook.title}
+
+        </h3>
+
+        <p>
+
+            単語 ${notebook.words.length}問
+
+        </p>
+
+        <p>
+
+            文章 ${notebook.sentences.length}問
+
+        </p>
+
+        <div class="card-buttons">
+
+            <button class="editBtn">
+
+                ✏ 編集
+
+            </button>
+
+            <button class="quizBtn">
+
+                ▶ テスト
+
+            </button>
+
+        </div>
+
+    `;
+
+    /*
+    編集
+    */
+
+    card.querySelector(".editBtn")
+
+        .addEventListener(
+
+            "click",
+
+            event => {
+
+                event.stopPropagation();
+
+                showEditor(notebook);
+
+            }
+
+        );
+
+    /*
+    テスト
+    */
+
+    card.querySelector(".quizBtn")
+
+        .addEventListener(
+
+            "click",
+
+            event => {
+
+                event.stopPropagation();
+
+                currentNotebook = notebook;
+
+                showQuizSettings();
+
+            }
+
+        );
+
+    /*
+    カード本体
+    */
+
+    card.addEventListener(
+
+        "click",
+
+        () => showEditor(notebook)
+
+    );
+
+    return card;
 
 }
 
 /*
 ====================================
+新しい範囲
+====================================
+*/
+
+function createNotebook() {
+
+    const title = prompt(
+
+        "範囲名を入力してください"
+
+    );
+
+    if (!title) {
+
+        return;
+
+    }
+
+    addNotebook(title);
+
+    renderNotebookList();
+
+}
+/*
+====================================
 保存
 ====================================
 */
+
 function saveNotebook() {
 
     saveCurrentNotebook();
 
     notebooks = loadData();
+
+    renderNotebookList();
 
     showHome();
 
@@ -158,9 +376,14 @@ function saveNotebook() {
 削除
 ====================================
 */
+
 function removeNotebook() {
 
-    if (!currentNotebook) return;
+    if (!currentNotebook) {
+
+        return;
+
+    }
 
     if (!confirm("この範囲を削除しますか？")) {
 
@@ -168,11 +391,49 @@ function removeNotebook() {
 
     }
 
-    deleteNotebook(currentNotebook.id);
+    if (currentNotebook.isCurrent) {
 
-    notebooks = loadData();
+        clearCurrentNotebook();
+
+    }
+
+    deleteNotebook(
+
+        currentNotebook.id
+
+    );
+
+    currentNotebook = null;
+
+    renderNotebookList();
 
     showHome();
+
+}
+
+/*
+====================================
+今週の範囲に設定
+====================================
+*/
+
+function setCurrentArea() {
+
+    if (!currentNotebook) {
+
+        return;
+
+    }
+
+    setCurrentNotebook(
+
+        currentNotebook.id
+
+    );
+
+    renderNotebookList();
+
+    alert("今週の範囲に設定しました。");
 
 }
 
@@ -181,19 +442,28 @@ function removeNotebook() {
 テスト設定へ
 ====================================
 */
+
 function startQuiz() {
 
     if (!currentNotebook) {
-
-        alert("範囲がありません。");
 
         return;
 
     }
 
-    if (currentNotebook.words.length === 0) {
+    if (
 
-        alert("単語・熟語が登録されていません。");
+        currentNotebook.words.length === 0 &&
+
+        currentNotebook.sentences.length === 0
+
+    ) {
+
+        alert(
+
+            "問題が登録されていません。"
+
+        );
 
         return;
 
@@ -208,67 +478,300 @@ function startQuiz() {
 テスト開始
 ====================================
 */
+
 function beginQuiz() {
 
     showQuiz();
 
-    initializeQuiz(currentNotebook);
+    initializeQuiz(
+
+        currentNotebook
+
+    );
 
 }
 
 /*
 ====================================
-イベント登録
+ホームへ戻る
 ====================================
 */
-window.addEventListener("DOMContentLoaded", () => {
 
-    notebooks = loadData();
+function backToHome() {
+
+    renderNotebookList();
 
     showHome();
 
-    document
-        .getElementById("newNotebookBtn")
-        .addEventListener("click", createNotebook);
+}
+/*
+====================================
+イベント登録
+====================================
+*/
 
-    document
-        .getElementById("backButton")
-        .addEventListener("click", showHome);
+window.addEventListener(
 
-    document
-        .getElementById("saveNotebookBtn")
-        .addEventListener("click", saveNotebook);
+    "DOMContentLoaded",
 
-    document
-        .getElementById("deleteNotebookBtn")
-        .addEventListener("click", removeNotebook);
+    () => {
 
-    document
-        .getElementById("startQuizBtn")
-        .addEventListener("click", startQuiz);
+        /*
+        ================================
+        データ読み込み
+        ================================
+        */
 
-    document
-        .getElementById("beginQuizBtn")
-        .addEventListener("click", beginQuiz);
+        notebooks = loadData();
 
-    document
-        .getElementById("backToEditorBtn")
-        .addEventListener("click", () => showEditor(currentNotebook));
+        /*
+        ================================
+        ホーム表示
+        ================================
+        */
 
-    document
-        .getElementById("backToEditorFromSettingsBtn")
-        .addEventListener("click", () => showEditor(currentNotebook));
+        showHome();
 
-    document
-        .getElementById("backToSettingsBtn")
-        .addEventListener("click", showQuizSettings);
+        /*
+        ================================
+        ホーム画面
+        ================================
+        */
 
-    document
-        .getElementById("importWordsBtn")
-        .addEventListener("click", importWords);
+        document
 
-    document
-        .getElementById("importSentencesBtn")
-        .addEventListener("click", importSentences);
+            .getElementById("newNotebookBtn")
 
-});
+            .addEventListener(
+
+                "click",
+
+                createNotebook
+
+            );
+
+        /*
+        ================================
+        編集画面
+        ================================
+        */
+
+        document
+
+            .getElementById("backButton")
+
+            .addEventListener(
+
+                "click",
+
+                backToHome
+
+            );
+
+        document
+
+            .getElementById("saveNotebookBtn")
+
+            .addEventListener(
+
+                "click",
+
+                saveNotebook
+
+            );
+
+        document
+
+            .getElementById("deleteNotebookBtn")
+
+            .addEventListener(
+
+                "click",
+
+                removeNotebook
+
+            );
+
+        /*
+        今週の範囲
+        */
+
+        const setCurrentBtn =
+
+            document.getElementById(
+
+                "setCurrentBtn"
+
+            );
+
+        if (setCurrentBtn) {
+
+            setCurrentBtn.addEventListener(
+
+                "click",
+
+                setCurrentArea
+
+            );
+
+        }
+
+        /*
+        テスト開始
+        */
+
+        document
+
+            .getElementById("startQuizBtn")
+
+            .addEventListener(
+
+                "click",
+
+                startQuiz
+
+            );
+
+        /*
+        ================================
+        テスト設定画面
+        ================================
+        */
+
+        const beginQuizBtn =
+
+            document.getElementById(
+
+                "beginQuizBtn"
+
+            );
+
+        if (beginQuizBtn) {
+
+            beginQuizBtn.addEventListener(
+
+                "click",
+
+                beginQuiz
+
+            );
+
+        }
+
+        const backToEditorFromSettingsBtn =
+
+            document.getElementById(
+
+                "backToEditorFromSettingsBtn"
+
+            );
+
+        if (
+
+            backToEditorFromSettingsBtn
+
+        ) {
+
+            backToEditorFromSettingsBtn
+
+                .addEventListener(
+
+                    "click",
+
+                    () =>
+
+                        showEditor(
+
+                            currentNotebook
+
+                        )
+
+                );
+
+        }
+
+        /*
+        ================================
+        テスト画面
+        ================================
+        */
+
+        document
+
+            .getElementById(
+
+                "backToSettingsBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                showQuizSettings
+
+            );
+
+        document
+
+            .getElementById(
+
+                "backToEditorBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                () =>
+
+                    showEditor(
+
+                        currentNotebook
+
+                    )
+
+            );
+
+        /*
+        ================================
+        編集機能
+        ================================
+        */
+
+        document
+
+            .getElementById(
+
+                "importWordsBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                importWords
+
+            );
+
+        document
+
+            .getElementById(
+
+                "importSentencesBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                importSentences
+
+            );
+
+    }
+
+);
