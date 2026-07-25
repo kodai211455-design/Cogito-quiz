@@ -1,13 +1,124 @@
 /*
 ====================================
-Cogito Study v0.1
+Cogito Study Ver.3
 editor.js
-編集画面専用
+編集画面
+====================================
+*/
+
+/*
+====================================
+現在編集中の範囲
 ====================================
 */
 
 let currentNotebook = null;
 
+/*
+====================================
+編集画面初期化
+====================================
+*/
+
+function initializeEditor(notebook) {
+
+    currentNotebook = notebook;
+
+    document
+        .getElementById("notebookTitle")
+        .value = notebook.title;
+
+    document
+        .getElementById("wordInput")
+        .value = notebook.words
+            .map(item => `${item.question},${item.answer}`)
+            .join("\n");
+
+    document
+        .getElementById("sentenceInput")
+        .value = notebook.sentences
+            .map(item => `${item.question},${item.answer}`)
+            .join("\n");
+
+    updateWordPreview();
+
+    updateSentencePreview();
+
+}
+
+/*
+====================================
+テキスト解析
+====================================
+*/
+
+function parseLines(text) {
+
+    const result = [];
+
+    if (!text.trim()) {
+
+        return result;
+
+    }
+
+    const lines = text.split("\n");
+
+    lines.forEach(line => {
+
+        line = line.trim();
+
+        if (line === "") {
+
+            return;
+
+        }
+
+        /*
+        最初のカンマだけ区切りにする
+        */
+
+        const comma = line.indexOf(",");
+
+        if (comma === -1) {
+
+            return;
+
+        }
+
+        const question =
+
+            line.substring(0, comma).trim();
+
+        const answer =
+
+            line.substring(comma + 1).trim();
+
+        if (
+
+            question === "" ||
+
+            answer === ""
+
+        ) {
+
+            return;
+
+        }
+
+        result.push({
+
+            question,
+
+            answer
+
+        });
+
+    });
+
+    return result;
+
+}
 /*
 ====================================
 単語読み込み
@@ -16,39 +127,27 @@ let currentNotebook = null;
 
 function importWords() {
 
-    if (!currentNotebook) return;
+    if (!currentNotebook) {
 
-    const text =
-        document
-        .getElementById("wordInput")
-        .value
-        .trim();
-
-    currentNotebook.words = [];
-
-    if (text !== "") {
-
-        const lines = text.split("\n");
-
-        lines.forEach(line => {
-
-            const parts = line.split(",");
-
-            if (parts.length >= 2) {
-
-                currentNotebook.words.push({
-
-                    question: parts[0].trim(),
-
-                    answer: parts[1].trim()
-
-                });
-
-            }
-
-        });
+        return;
 
     }
+
+    const text =
+
+        document
+
+            .getElementById(
+
+                "wordInput"
+
+            )
+
+            .value;
+
+    currentNotebook.words =
+
+        parseLines(text);
 
     updateWordPreview();
 
@@ -62,39 +161,27 @@ function importWords() {
 
 function importSentences() {
 
-    if (!currentNotebook) return;
+    if (!currentNotebook) {
 
-    const text =
-        document
-        .getElementById("sentenceInput")
-        .value
-        .trim();
-
-    currentNotebook.sentences = [];
-
-    if (text !== "") {
-
-        const lines = text.split("\n");
-
-        lines.forEach(line => {
-
-            const parts = line.split(",");
-
-            if (parts.length >= 2) {
-
-                currentNotebook.sentences.push({
-
-                    question: parts[0].trim(),
-
-                    answer: parts[1].trim()
-
-                });
-
-            }
-
-        });
+        return;
 
     }
+
+    const text =
+
+        document
+
+            .getElementById(
+
+                "sentenceInput"
+
+            )
+
+            .value;
+
+    currentNotebook.sentences =
+
+        parseLines(text);
 
     updateSentencePreview();
 
@@ -102,21 +189,76 @@ function importSentences() {
 
 /*
 ====================================
-単語プレビュー
+読み込みボタン
+====================================
+*/
+
+function importAll() {
+
+    importWords();
+
+    importSentences();
+
+}
+/*
+====================================
+単語プレビュー更新
 ====================================
 */
 
 function updateWordPreview() {
 
     const preview =
-        document.getElementById("wordPreview");
+
+        document.getElementById(
+
+            "wordPreview"
+
+        );
 
     preview.innerHTML = "";
 
-    currentNotebook.words.forEach(word => {
+    if (
 
-        preview.innerHTML +=
-        `<p>${word.question}　→　${word.answer}</p>`;
+        !currentNotebook ||
+
+        currentNotebook.words.length === 0
+
+    ) {
+
+        preview.innerHTML =
+
+            "<p>まだ単語・熟語はありません。</p>";
+
+        return;
+
+    }
+
+    currentNotebook.words.forEach((item, index) => {
+
+        const div =
+
+            document.createElement("div");
+
+        div.className = "previewCard";
+
+        div.innerHTML =
+
+            `
+            <b>${index + 1}.</b>
+
+            ${item.question}
+
+            <br>
+
+            ↓
+
+            <br>
+
+            ${item.answer}
+            `;
+
+        preview.appendChild(div);
 
     });
 
@@ -124,42 +266,118 @@ function updateWordPreview() {
 
 /*
 ====================================
-文章プレビュー
+文章プレビュー更新
 ====================================
 */
 
 function updateSentencePreview() {
 
     const preview =
-        document.getElementById("sentencePreview");
+
+        document.getElementById(
+
+            "sentencePreview"
+
+        );
 
     preview.innerHTML = "";
 
-    currentNotebook.sentences.forEach(sentence => {
+    if (
 
-        preview.innerHTML +=
-        `<p>${sentence.question}<br>↓<br>${sentence.answer}</p><hr>`;
+        !currentNotebook ||
+
+        currentNotebook.sentences.length === 0
+
+    ) {
+
+        preview.innerHTML =
+
+            "<p>まだ文章はありません。</p>";
+
+        return;
+
+    }
+
+    currentNotebook.sentences.forEach((item, index) => {
+
+        const div =
+
+            document.createElement("div");
+
+        div.className = "previewCard";
+
+        div.innerHTML =
+
+            `
+            <b>${index + 1}.</b>
+
+            <br>
+
+            ${item.question}
+
+            <br>
+
+            ↓
+
+            <br>
+
+            ${item.answer}
+            `;
+
+        preview.appendChild(div);
 
     });
 
 }
-
 /*
 ====================================
-保存
+現在の内容を保存
 ====================================
 */
 
 function saveCurrentNotebook() {
 
-    if (!currentNotebook) return;
+    if (!currentNotebook) {
+
+        return;
+
+    }
+
+    /*
+    範囲名
+    */
 
     currentNotebook.title =
-        document
-        .getElementById("notebookTitle")
-        .value;
 
-    updateNotebook(currentNotebook);
+        document
+
+            .getElementById(
+
+                "notebookTitle"
+
+            )
+
+            .value
+
+            .trim();
+
+    /*
+    念のため再読み込み
+    */
+
+    importWords();
+
+    importSentences();
+
+    /*
+    保存
+    */
+
+    updateNotebook(
+
+        currentNotebook
+
+    );
 
     alert("保存しました！");
 
@@ -167,36 +385,92 @@ function saveCurrentNotebook() {
 
 /*
 ====================================
-イベント
-====================================
-/*
-====================================
-初期化
+今週の範囲に設定
 ====================================
 */
 
-function initializeEditor(notebook){
+function setCurrentNotebook() {
 
-    currentNotebook = notebook;
+    if (!currentNotebook) {
 
-    document.getElementById("notebookTitle").value =
-        notebook.title;
-    document.getElementById("wordInput").value =
-    notebook.words
-        .map(w => `${w.question},${w.answer}`)
-        .join("\n");
+        return;
 
-document.getElementById("sentenceInput").value =
-    notebook.sentences
-        .map(s => `${s.question},${s.answer}`)
-        .join("\n");
-    updateWordPreview();
+    }
 
-    updateSentencePreview();
+    localStorage.setItem(
+
+        "currentNotebookId",
+
+        currentNotebook.id
+
+    );
+
+    alert(
+
+        "⭐ 今週の範囲に設定しました！"
+
+    );
 
 }
 
+/*
+====================================
+今週の範囲取得
+====================================
+*/
 
-    
+function getCurrentNotebook() {
 
-        
+    const id =
+
+        localStorage.getItem(
+
+            "currentNotebookId"
+
+        );
+
+    if (!id) {
+
+        return null;
+
+    }
+
+    return getNotebook(id);
+
+}
+
+/*
+====================================
+イベント登録
+====================================
+*/
+
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        const currentBtn =
+
+            document.getElementById(
+
+                "setCurrentBtn"
+
+            );
+
+        if (currentBtn) {
+
+            currentBtn.addEventListener(
+
+                "click",
+
+                setCurrentNotebook
+
+            );
+
+        }
+
+    }
+
+);
