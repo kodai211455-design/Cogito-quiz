@@ -638,25 +638,6 @@ window.addEventListener(
         ================================
         */
 
-        const beginQuizBtn =
-
-            document.getElementById(
-
-                "beginQuizBtn"
-
-            );
-
-        if (beginQuizBtn) {
-
-            beginQuizBtn.addEventListener(
-
-                "click",
-
-                beginQuiz
-
-            );
-
-        }
 
         const backToEditorFromSettingsBtn =
 
