@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Cogito Study Ver.0.2.1</title>
+    <title>Cogito Study Ver.3</title>
 
     <link
         rel="stylesheet"
@@ -29,7 +29,7 @@
 
     <p>
 
-        Ver.0.2.1
+        Ver.3
 
     </p>
 
@@ -41,17 +41,38 @@
 ホーム画面
 ========================== -->
 
-<section id="home">
+<section
+    id="homeScreen"
+    class="screen">
 
     <h2>
 
-        単語帳一覧
+        ⭐ 今週の範囲
+
+    </h2>
+
+    <div id="currentNotebook">
+
+        <p>
+
+            今週の範囲は設定されていません。
+
+        </p>
+
+    </div>
+
+    <hr>
+
+    <h2>
+
+        📚 単語帳一覧
 
     </h2>
 
     <p>
 
-        範囲を選択してください。
+        編集する範囲、
+        またはテストしたい範囲を選択してください。
 
     </p>
 
@@ -68,22 +89,32 @@
     </div>
 
 </section>
+
 <!-- ==========================
 編集画面
 ========================== -->
 
-<section id="editor" style="display:none;">
+<section
+    id="editorScreen"
+    class="screen"
+    style="display:none;">
 
     <button id="backButton">
+
         ← ホームへ戻る
+
     </button>
 
     <h2>
-        範囲編集
+
+        ✏ 範囲編集
+
     </h2>
 
     <label for="notebookTitle">
+
         範囲名
+
     </label>
 
     <input
@@ -92,13 +123,14 @@
         placeholder="例：Lesson5">
 
     <hr>
-
-    <!-- ======================
+        <!-- ======================
     単語・熟語
     ======================= -->
 
     <h3>
-        単語・熟語
+
+        📖 単語・熟語
+
     </h3>
 
     <p>
@@ -159,7 +191,7 @@ be interested in,～に興味がある">
 
     <h3>
 
-        文章
+        📝 文章
 
     </h3>
 
@@ -196,11 +228,13 @@ This is my pen.,これは私のペンです。">
 
     <hr>
 
-    <!-- ======================
-    ボタン
-    ======================= -->
-
     <div class="editorButtons">
+
+        <button id="setCurrentBtn">
+
+            ⭐ 今週の範囲に設定
+
+        </button>
 
         <button id="saveNotebookBtn">
 
@@ -210,7 +244,7 @@ This is my pen.,これは私のペンです。">
 
         <button id="startQuizBtn">
 
-            📝 テスト設定へ
+            ⚙ テスト設定へ
 
         </button>
 
@@ -223,18 +257,29 @@ This is my pen.,これは私のペンです。">
     </div>
 
 </section>
+
 <!-- ==========================
 テスト設定画面
 ========================== -->
 
-<section id="quizSettings" style="display:none;">
+<section
+
+    id="settingsScreen"
+
+    class="screen"
+
+    style="display:none;">
 
     <button id="backToEditorFromSettingsBtn">
+
         ← 編集画面へ戻る
+
     </button>
 
     <h2>
-        📝 テスト設定
+
+        ⚙ テスト設定
+
     </h2>
 
     <hr>
@@ -242,28 +287,41 @@ This is my pen.,これは私のペンです。">
     <!-- 出題方向 -->
 
     <h3>
+
         出題方向
+
     </h3>
 
     <label>
+
         <input
+
             type="radio"
+
             name="quizDirection"
+
             value="jpToEn"
+
             checked>
 
         日本語 → 英語
+
     </label>
 
     <br>
 
     <label>
+
         <input
+
             type="radio"
+
             name="quizDirection"
+
             value="enToJp">
 
         英語 → 日本語
+
     </label>
 
     <hr>
@@ -271,15 +329,21 @@ This is my pen.,これは私のペンです。">
     <!-- ヒント -->
 
     <h3>
-        ヒント
+
+        ヒント表示
+
     </h3>
 
     <label>
 
         <input
+
             type="radio"
+
             name="hintMode"
+
             value="none"
+
             checked>
 
         表示しない
@@ -291,11 +355,14 @@ This is my pen.,これは私のペンです。">
     <label>
 
         <input
+
             type="radio"
+
             name="hintMode"
+
             value="first">
 
-        各単語の頭文字だけ表示
+        各単語の頭文字
 
     </label>
 
@@ -304,73 +371,68 @@ This is my pen.,これは私のペンです。">
     <label>
 
         <input
+
             type="radio"
+
             name="hintMode"
+
             value="first2">
 
-        各単語の最初2文字を表示
+        各単語の最初2文字
 
     </label>
 
     <hr>
-
-    <!-- 問題数 -->
+        <!-- 問題数 -->
 
     <h3>
-        問題数
+
+        出題数
+
     </h3>
 
-    <label>
+    <p>
 
-        <input
-            type="radio"
-            name="questionCount"
-            value="all"
-            checked>
+        出題する問題数を入力してください。
 
-        全問題
+    </p>
 
-    </label>
+    <input
 
-    <br>
+        type="number"
 
-    <label>
+        id="questionCount"
 
-        <input
-            type="radio"
-            name="questionCount"
-            value="10">
+        min="1"
 
-        10問
+        value="10"
 
-    </label>
+        placeholder="10">
 
-    <br>
+    <p>
 
-    <label>
+        （登録問題数を超える場合は、自動で全問題になります。）
 
-        <input
-            type="radio"
-            name="questionCount"
-            value="20">
-
-        20問
-
-    </label>
+    </p>
 
     <hr>
 
     <!-- シャッフル -->
 
     <h3>
+
         出題順
+
     </h3>
 
     <label>
 
         <input
+
             type="checkbox"
+
             id="shuffleQuestions"
+
             checked>
 
         ランダムに出題する
@@ -379,34 +441,6 @@ This is my pen.,これは私のペンです。">
 
     <hr>
 
-    <!-- 将来追加予定 -->
-
-    <details>
-
-        <summary>
-
-            今後追加予定の機能
-
-        </summary>
-
-        <ul>
-
-            <li>間違えた問題だけ復習</li>
-
-            <li>並べ替え問題</li>
-
-            <li>全文入力問題</li>
-
-            <li>制限時間</li>
-
-            <li>文章問題</li>
-
-        </ul>
-
-    </details>
-
-    <br>
-
     <button id="beginQuizBtn">
 
         ▶ テスト開始
@@ -414,26 +448,41 @@ This is my pen.,これは私のペンです。">
     </button>
 
 </section>
+
 <!-- ==========================
 テスト画面
 ========================== -->
 
-<section id="quiz" style="display:none;">
+<section
+
+    id="quizScreen"
+
+    class="screen"
+
+    style="display:none;">
 
     <button id="backToSettingsBtn">
+
         ← テスト設定へ戻る
+
     </button>
 
     <h2 id="quizTitle">
-        📝 単語テスト
+
+        📝 テスト
+
     </h2>
 
     <p id="quizMode">
+
         日本語 → 英語
+
     </p>
 
     <p id="quizProgress">
+
         問題 1 / 20
+
     </p>
 
     <hr>
@@ -441,11 +490,19 @@ This is my pen.,これは私のペンです。">
     <div class="questionArea">
 
         <h3>
+
             問題
+
         </h3>
 
-        <div id="quizQuestion" class="questionText">
+        <div
+
+            id="quizQuestion"
+
+            class="questionText">
+
             問題が表示されます
+
         </div>
 
     </div>
@@ -455,10 +512,16 @@ This is my pen.,これは私のペンです。">
     <div class="hintArea">
 
         <h3>
+
             ヒント
+
         </h3>
 
-        <div id="quizHint" class="hintText">
+        <div
+
+            id="quizHint"
+
+            class="hintText">
 
             （ヒントなし）
 
@@ -471,13 +534,19 @@ This is my pen.,これは私のペンです。">
     <div class="answerArea">
 
         <h3>
+
             答え
+
         </h3>
 
         <input
+
             type="text"
+
             id="quizAnswer"
+
             autocomplete="off"
+
             placeholder="ここに入力">
 
     </div>
@@ -491,7 +560,9 @@ This is my pen.,これは私のペンです。">
     </button>
 
     <button
+
         id="nextQuestionBtn"
+
         style="display:none;">
 
         ▶ 次の問題
@@ -503,3 +574,96 @@ This is my pen.,これは私のペンです。">
     </div>
 
 </section>
+<!-- ==========================
+結果画面
+========================== -->
+
+<section
+
+    id="resultScreen"
+
+    class="screen"
+
+    style="display:none;">
+
+    <h2>
+
+        🎉 テスト結果
+
+    </h2>
+
+    <hr>
+
+    <div id="resultScore">
+
+        0 / 0
+
+    </div>
+
+    <div id="resultRate">
+
+        正答率 0%
+
+    </div>
+
+    <hr>
+
+    <h3>
+
+        間違えた問題
+
+    </h3>
+
+    <div id="mistakeList">
+
+        <p>
+
+            全問正解です！
+
+        </p>
+
+    </div>
+
+    <hr>
+
+    <button id="retryQuizBtn">
+
+        🔄 もう一度挑戦
+
+    </button>
+
+    <button id="returnEditorBtn">
+
+        ✏ 編集画面へ戻る
+
+    </button>
+
+    <button id="returnHomeBtn">
+
+        🏠 ホームへ戻る
+
+    </button>
+
+</section>
+
+</main>
+
+<!-- ==========================
+JavaScript
+========================== -->
+
+<script src="js/storage.js"></script>
+
+<script src="js/app.js"></script>
+
+<script src="js/editor.js"></script>
+
+<script src="js/settings.js"></script>
+
+<script src="js/hint.js"></script>
+
+<script src="js/quiz.js"></script>
+
+</body>
+
+</html>
