@@ -1,143 +1,96 @@
 /*
 ====================================
-Cogito Study v0.2.1
+Cogito Study Ver.3
 quiz.js
-単語・熟語テスト
+====================================
+*/
+
+/*
+====================================
+テスト状態
 ====================================
 */
 
 let quizData = [];
 
-let currentQuestionIndex = 0;
+let currentQuestion = 0;
 
 let score = 0;
 
-/*
-====================================
-テスト設定
-====================================
-*/
-
-let quizSettings = {
-
-    direction: "jpToEn",
-
-    hintMode: "none",
-
-    questionCount: "all",
-
-    shuffle: true
-
-};
+let mistakes = [];
 
 /*
 ====================================
-設定読み込み
+テスト初期化
 ====================================
 */
 
-function loadQuizSettings() {
+function initializeQuiz(notebook, settings) {
 
-    quizSettings.direction =
-        document.querySelector(
-            'input[name="quizDirection"]:checked'
-        ).value;
+    /*
+    状態初期化
+    */
 
-    quizSettings.hintMode =
-        document.querySelector(
-            'input[name="hintMode"]:checked'
-        ).value;
+    currentQuestion = 0;
 
-    quizSettings.questionCount =
-        document.querySelector(
-            'input[name="questionCount"]:checked'
-        ).value;
+    score = 0;
 
-    quizSettings.shuffle =
-        document.getElementById(
-            "shuffleQuestions"
-        ).checked;
-
-}
-
-/*
-====================================
-テスト開始
-====================================
-*/
-
-function initializeQuiz(notebook) {
-
-    loadQuizSettings();
+    mistakes = [];
 
     quizData = [...notebook.words];
 
     /*
-    ----------------------------
-    シャッフル
-    ----------------------------
+    ランダム出題
     */
 
-    if (quizSettings.shuffle) {
+    if (settings.shuffle) {
 
-        shuffleArray(quizData);
+        quizData.sort(() => Math.random() - 0.5);
 
     }
 
     /*
-    ----------------------------
-    問題数
-    ----------------------------
-    */
-
-    if (quizSettings.questionCount !== "all") {
-
-        const count =
-            Number(
-                quizSettings.questionCount
-            );
-
-        quizData =
-            quizData.slice(0, count);
-
-    }
-
-    currentQuestionIndex = 0;
-
-    score = 0;
-
-    /*
-    ----------------------------
-    出題方向表示
-    ----------------------------
+    問題数調整
     */
 
     if (
-        quizSettings.direction
-        ===
-        "jpToEn"
+
+        settings.questionCount < quizData.length
+
     ) {
 
-        document
-            .getElementById("quizMode")
-            .textContent =
-            "日本語 → 英語";
+        quizData = quizData.slice(
 
-    }
+            0,
 
-    else {
+            settings.questionCount
 
-        document
-            .getElementById("quizMode")
-            .textContent =
-            "英語 → 日本語";
+        );
 
     }
 
     /*
-    ----------------------------
+    モード表示
+    */
+
+    document.getElementById(
+
+        "quizMode"
+
+    ).textContent =
+
+        settings.direction === "jpToEn"
+
+        ?
+
+        "日本語 → 英語"
+
+        :
+
+        "英語 → 日本語";
+
+    /*
     最初の問題
-    ----------------------------
     */
 
     showQuestion();
@@ -152,127 +105,170 @@ function initializeQuiz(notebook) {
 function showQuestion() {
 
     const question =
-        quizData[currentQuestionIndex];
 
-    document.getElementById("quizProgress").textContent =
-        `問題 ${currentQuestionIndex + 1} / ${quizData.length}`;
+        quizData[currentQuestion];
+
+    const settings =
+
+        getQuizSettings();
 
     /*
-    ----------------------------
-    出題方向
-    ----------------------------
+    問題番号
     */
 
-    if (quizSettings.direction === "jpToEn") {
+    document.getElementById(
 
-        document.getElementById("quizQuestion").textContent =
-            question.answer;
+        "quizProgress"
+
+    ).textContent =
+
+        "問題 "
+
+        +
+
+        (currentQuestion + 1)
+
+        +
+
+        " / "
+
+        +
+
+        quizData.length;
+
+    /*
+    出題方向
+    */
+
+    let questionText = "";
+
+    let answerText = "";
+
+    if (
+
+        settings.direction === "jpToEn"
+
+    ) {
+
+        questionText =
+
+            question.japanese;
+
+        answerText =
+
+            question.english;
 
     }
 
     else {
 
-        document.getElementById("quizQuestion").textContent =
-            question.question;
+        questionText =
+
+            question.english;
+
+        answerText =
+
+            question.japanese;
 
     }
 
     /*
-    ----------------------------
-    ヒント
-    ----------------------------
+    問題表示
     */
 
-    if (quizSettings.direction === "jpToEn") {
+    document.getElementById(
 
-        document.getElementById("quizHint").textContent =
+        "quizQuestion"
+
+    ).textContent =
+
+        questionText;
+
+    /*
+    ヒント
+    */
+
+    if (
+
+        settings.direction === "jpToEn"
+
+    ) {
+
+        const hint =
+
             createHint(
-                question.question,
-                quizSettings.hintMode
+
+                answerText,
+
+                settings.hintMode
+
             );
 
+        document.getElementById(
+
+            "quizHint"
+
+        ).textContent =
+
+            hint || "（ヒントなし）";
+
     }
 
     else {
 
-        document.getElementById("quizHint").textContent =
+        document.getElementById(
+
+            "quizHint"
+
+        ).textContent =
+
             "（ヒントなし）";
 
     }
 
-    document.getElementById("quizAnswer").value = "";
+    /*
+    入力欄初期化
+    */
 
-    document.getElementById("quizResult").innerHTML = "";
+    const answerBox =
 
-    document.getElementById("checkAnswerBtn").style.display =
-        "inline-block";
+        document.getElementById(
 
-    document.getElementById("nextQuestionBtn").style.display =
-        "none";
+            "quizAnswer"
 
-}
+        );
 
-/*
-====================================
-ヒント生成
-====================================
-*/
+    answerBox.value = "";
 
-function createHint(text, mode) {
+    answerBox.focus();
 
-    if (mode === "none") {
+    /*
+    結果表示クリア
+    */
 
-        return "（ヒントなし）";
+    document.getElementById(
 
-    }
+        "quizResult"
 
-    const words = text.split(" ");
+    ).textContent = "";
 
-    return words.map(word => {
+    /*
+    ボタン切替
+    */
 
-        if (word.length === 0) {
+    document.getElementById(
 
-            return "";
+        "checkAnswerBtn"
 
-        }
+    ).style.display = "inline-block";
 
-        /*
-        ----------------------------
-        頭文字
-        ----------------------------
-        */
+    document.getElementById(
 
-        if (mode === "first") {
+        "nextQuestionBtn"
 
-            return word[0] + "_".repeat(word.length - 1);
-
-        }
-
-        /*
-        ----------------------------
-        最初2文字
-        ----------------------------
-        */
-
-        if (mode === "first2") {
-
-            if (word.length <= 2) {
-
-                return word;
-
-            }
-
-            return word.substring(0,2)
-                + "_".repeat(word.length - 2);
-
-        }
-
-        return word;
-
-    }).join(" ");
+    ).style.display = "none";
 
 }
-
 /*
 ====================================
 答え合わせ
@@ -281,73 +277,113 @@ function createHint(text, mode) {
 
 function checkAnswer() {
 
-    const input =
-        document.getElementById("quizAnswer")
-        .value
-        .trim();
+    const settings =
+
+        getQuizSettings();
 
     const question =
-        quizData[currentQuestionIndex];
 
-    let correctAnswer;
+        quizData[currentQuestion];
 
-    if (quizSettings.direction === "jpToEn") {
+    /*
+    正解取得
+    */
 
-        correctAnswer = question.question;
+    const correctAnswer =
 
-    }
+        settings.direction === "jpToEn"
 
-    else {
+        ?
 
-        correctAnswer = question.answer;
+        question.english
 
-    }
+        :
+
+        question.japanese;
+
+    /*
+    入力取得
+    */
+
+    const userAnswer =
+
+        document
+            .getElementById("quizAnswer")
+            .value;
+
+    /*
+    判定
+    */
 
     if (
-        input.toLowerCase()
-        ===
-        correctAnswer.toLowerCase()
+
+        isCorrectAnswer(
+
+            userAnswer,
+
+            correctAnswer
+
+        )
+
     ) {
 
         score++;
 
-        document.getElementById("quizResult").innerHTML =
+        document
+            .getElementById("quizResult")
+            .innerHTML =
 
-        `
-        <p style="color:green;font-weight:bold;">
-        ⭕ 正解！
-        </p>
-        `;
+            "⭕ 正解！";
 
     }
 
     else {
 
-        document.getElementById("quizResult").innerHTML =
+        mistakes.push({
 
-        `
-        <p style="color:red;font-weight:bold;">
-        ❌ 不正解
-        </p>
+            question:
 
-        <p>
+                settings.direction === "jpToEn"
 
-        正解：
+                ?
 
-        ${correctAnswer}
+                question.japanese
 
-        </p>
-        `;
+                :
+
+                question.english,
+
+            correct: correctAnswer,
+
+            answer: userAnswer
+
+        });
+
+        document
+            .getElementById("quizResult")
+            .innerHTML =
+
+            `
+            ❌ 不正解<br>
+            正解：<b>${correctAnswer}</b>
+            `;
 
     }
 
-    document.getElementById("checkAnswerBtn").style.display =
-        "none";
+    /*
+    ボタン切替
+    */
 
-    document.getElementById("nextQuestionBtn").style.display =
-        "inline-block";
+    document
+        .getElementById("checkAnswerBtn")
+        .style.display = "none";
+
+    document
+        .getElementById("nextQuestionBtn")
+        .style.display = "inline-block";
 
 }
+
 /*
 ====================================
 次の問題
@@ -356,9 +392,15 @@ function checkAnswer() {
 
 function nextQuestion() {
 
-    currentQuestionIndex++;
+    currentQuestion++;
 
-    if (currentQuestionIndex >= quizData.length) {
+    if (
+
+        currentQuestion >=
+
+        quizData.length
+
+    ) {
 
         showResult();
 
@@ -369,7 +411,6 @@ function nextQuestion() {
     showQuestion();
 
 }
-
 /*
 ====================================
 結果表示
@@ -378,109 +419,117 @@ function nextQuestion() {
 
 function showResult() {
 
-    document.getElementById("quizTitle").textContent =
-        "🎉 テスト終了";
+    document.getElementById("quizScreen").style.display = "none";
 
-    document.getElementById("quizMode").textContent =
-        "";
+    document.getElementById("resultScreen").style.display = "block";
 
-    document.getElementById("quizProgress").textContent =
-        "";
+    /*
+    得点
+    */
 
-    document.getElementById("quizQuestion").innerHTML =
-        "お疲れさまでした！";
+    document.getElementById(
 
-    document.getElementById("quizHint").textContent =
-        "";
+        "resultScore"
 
-    document.getElementById("quizAnswer").style.display =
-        "none";
+    ).textContent =
 
-    document.getElementById("checkAnswerBtn").style.display =
-        "none";
+        score + " / " + quizData.length;
 
-    document.getElementById("nextQuestionBtn").style.display =
-        "none";
+    /*
+    正答率
+    */
 
-    document.getElementById("quizResult").innerHTML =
-        `
-        <h3>${score} / ${quizData.length} 問正解！</h3>
+    const rate =
 
-        <p>
-        正答率
-        ${Math.round(score / quizData.length * 100)}%
-        </p>
+        Math.round(
 
-        <button id="finishQuizBtn">
-            編集画面へ戻る
-        </button>
-        `;
+            score / quizData.length * 100
 
-    document
-        .getElementById("finishQuizBtn")
-        .addEventListener(
-            "click",
-            () => showEditor(currentNotebook)
         );
 
-}
+    document.getElementById(
 
-/*
-====================================
-シャッフル
-====================================
-*/
+        "resultRate"
 
-function shuffleArray(array) {
+    ).textContent =
 
-    for (
-        let i = array.length - 1;
-        i > 0;
-        i--
-    ) {
+        "正答率 " + rate + "%";
 
-        const j = Math.floor(
-            Math.random() * (i + 1)
+    /*
+    間違えた問題
+    */
+
+    const list =
+
+        document.getElementById(
+
+            "mistakeList"
+
         );
 
-        [array[i], array[j]] =
-        [array[j], array[i]];
+    list.innerHTML = "";
 
-    }
+    if (mistakes.length === 0) {
 
-}
+        list.innerHTML =
 
-/*
-====================================
-Enterキー対応
-====================================
-*/
-
-function handleQuizEnter(event) {
-
-    if (event.key !== "Enter") {
-
-        return;
-
-    }
-
-    event.preventDefault();
-
-    if (
-        document.getElementById("checkAnswerBtn").style.display
-        !==
-        "none"
-    ) {
-
-        checkAnswer();
+            "<p>🎉 全問正解です！</p>";
 
     }
 
     else {
 
-        nextQuestion();
+        mistakes.forEach(item => {
+
+            const div =
+
+                document.createElement("div");
+
+            div.className = "mistakeCard";
+
+            div.innerHTML =
+
+                `
+                <p><b>問題</b><br>${item.question}</p>
+
+                <p><b>あなたの答え</b><br>${item.answer || "（未入力）"}</p>
+
+                <p><b>正解</b><br>${item.correct}</p>
+
+                <hr>
+                `;
+
+            list.appendChild(div);
+
+        });
 
     }
+
+}
+
+/*
+====================================
+もう一度挑戦
+====================================
+*/
+
+function retryQuiz() {
+
+    document.getElementById(
+
+        "resultScreen"
+
+    ).style.display = "none";
+
+    showQuiz();
+
+    initializeQuiz(
+
+        currentNotebook,
+
+        getQuizSettings()
+
+    );
 
 }
 
@@ -490,27 +539,172 @@ function handleQuizEnter(event) {
 ====================================
 */
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener(
 
-    document
-        .getElementById("checkAnswerBtn")
-        .addEventListener(
-            "click",
-            checkAnswer
-        );
+    "DOMContentLoaded",
 
-    document
-        .getElementById("nextQuestionBtn")
-        .addEventListener(
-            "click",
-            nextQuestion
-        );
+    () => {
 
-    document
-        .getElementById("quizAnswer")
-        .addEventListener(
-            "keydown",
-            handleQuizEnter
-        );
+        /*
+        答え合わせ
+        */
 
-});
+        document
+
+            .getElementById(
+
+                "checkAnswerBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                checkAnswer
+
+            );
+
+        /*
+        次へ
+        */
+
+        document
+
+            .getElementById(
+
+                "nextQuestionBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                nextQuestion
+
+            );
+
+        /*
+        Enterキー対応
+        */
+
+        document
+
+            .getElementById(
+
+                "quizAnswer"
+
+            )
+
+            .addEventListener(
+
+                "keydown",
+
+                function(event) {
+
+                    if (
+
+                        event.key !== "Enter"
+
+                    ) {
+
+                        return;
+
+                    }
+
+                    event.preventDefault();
+
+                    const nextVisible =
+
+                        document
+
+                            .getElementById(
+
+                                "nextQuestionBtn"
+
+                            )
+
+                            .style.display
+
+                            !== "none";
+
+                    if (nextVisible) {
+
+                        nextQuestion();
+
+                    }
+
+                    else {
+
+                        checkAnswer();
+
+                    }
+
+                }
+
+            );
+
+        /*
+        リトライ
+        */
+
+        document
+
+            .getElementById(
+
+                "retryQuizBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                retryQuiz
+
+            );
+
+        /*
+        編集へ戻る
+        */
+
+        document
+
+            .getElementById(
+
+                "returnEditorBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                () => showEditor(currentNotebook)
+
+            );
+
+        /*
+        ホームへ戻る
+        */
+
+        document
+
+            .getElementById(
+
+                "returnHomeBtn"
+
+            )
+
+            .addEventListener(
+
+                "click",
+
+                showHome
+
+            );
+
+    }
+
+);
