@@ -2,6 +2,7 @@
 ====================================
 Cogito Study Ver.3
 quiz.js
+テスト機能
 ====================================
 */
 
@@ -28,7 +29,9 @@ let mistakes = [];
 function initializeQuiz(notebook, settings) {
 
     /*
-    状態初期化
+    ====================================
+    テスト状態をリセット
+    ====================================
     */
 
     currentQuestion = 0;
@@ -37,20 +40,56 @@ function initializeQuiz(notebook, settings) {
 
     mistakes = [];
 
+    /*
+    ====================================
+    問題データを作成
+    ====================================
+    */
+
     quizData = [...notebook.words];
 
     /*
-    ランダム出題
+    ====================================
+    問題がない場合
+    ====================================
     */
 
-    if (settings.shuffle) {
+    if (quizData.length === 0) {
 
-        quizData.sort(() => Math.random() - 0.5);
+        document.getElementById(
+            "quizQuestion"
+        ).textContent =
+            "問題がありません。";
+
+        document.getElementById(
+            "quizProgress"
+        ).textContent =
+            "問題 0 / 0";
+
+        return;
 
     }
 
     /*
-    問題数調整
+    ====================================
+    シャッフル
+    ====================================
+    */
+
+    if (settings.shuffle) {
+
+        quizData.sort(
+
+            () => Math.random() - 0.5
+
+        );
+
+    }
+
+    /*
+    ====================================
+    問題数を調整
+    ====================================
     */
 
     if (
@@ -70,27 +109,25 @@ function initializeQuiz(notebook, settings) {
     }
 
     /*
-    モード表示
+    ====================================
+    出題方向を表示
+    ====================================
     */
 
     document.getElementById(
-
         "quizMode"
-
     ).textContent =
 
         settings.direction === "jpToEn"
 
-        ?
+            ? "日本語 → 英語"
 
-        "日本語 → 英語"
-
-        :
-
-        "英語 → 日本語";
+            : "英語 → 日本語";
 
     /*
-    最初の問題
+    ====================================
+    最初の問題を表示
+    ====================================
     */
 
     showQuestion();
@@ -104,45 +141,57 @@ function initializeQuiz(notebook, settings) {
 
 function showQuestion() {
 
-    const question =
+    /*
+    ====================================
+    現在の問題を取得
+    ====================================
+    */
 
+    const question =
         quizData[currentQuestion];
 
-    const settings =
+    /*
+    ====================================
+    設定を取得
+    ====================================
+    */
 
+    const settings =
         getQuizSettings();
 
     /*
+    ====================================
     問題番号
+    ====================================
     */
 
     document.getElementById(
-
         "quizProgress"
-
     ).textContent =
 
-        "問題 "
+        "問題 " +
 
-        +
+        (currentQuestion + 1) +
 
-        (currentQuestion + 1)
-
-        +
-
-        " / "
-
-        +
+        " / " +
 
         quizData.length;
 
     /*
-    出題方向
+    ====================================
+    問題文と正解を決定
+    ====================================
     */
 
     let questionText = "";
 
     let answerText = "";
+
+    /*
+    ====================================
+    日本語 → 英語
+    ====================================
+    */
 
     if (
 
@@ -151,41 +200,55 @@ function showQuestion() {
     ) {
 
         questionText =
-
-            question.japanese;
-
-        answerText =
-
-            question.english;
-
-    }
-
-    else {
-
-        questionText =
-
-            question.english;
+            question.answer;
 
         answerText =
-
-            question.japanese;
+            question.question;
 
     }
 
     /*
-    問題表示
+    ====================================
+    英語 → 日本語
+    ====================================
+    */
+
+    else {
+
+        questionText =
+            question.question;
+
+        answerText =
+            question.answer;
+
+    }
+
+    /*
+    ====================================
+    問題を表示
+    ====================================
     */
 
     document.getElementById(
-
         "quizQuestion"
-
     ).textContent =
 
         questionText;
 
     /*
+    ====================================
     ヒント
+    ====================================
+    */
+
+    const hintElement =
+        document.getElementById(
+            "quizHint"
+        );
+
+    /*
+    日本語 → 英語の場合
+    英語の答えに対してヒントを表示
     */
 
     if (
@@ -195,47 +258,37 @@ function showQuestion() {
     ) {
 
         const hint =
-
             createHint(
-
                 answerText,
-
                 settings.hintMode
-
             );
 
-        document.getElementById(
-
-            "quizHint"
-
-        ).textContent =
+        hintElement.textContent =
 
             hint || "（ヒントなし）";
 
     }
 
+    /*
+    英語 → 日本語の場合
+    */
+
     else {
 
-        document.getElementById(
-
-            "quizHint"
-
-        ).textContent =
-
+        hintElement.textContent =
             "（ヒントなし）";
 
     }
 
     /*
-    入力欄初期化
+    ====================================
+    入力欄をリセット
+    ====================================
     */
 
     const answerBox =
-
         document.getElementById(
-
             "quizAnswer"
-
         );
 
     answerBox.value = "";
@@ -243,30 +296,30 @@ function showQuestion() {
     answerBox.focus();
 
     /*
-    結果表示クリア
+    ====================================
+    結果表示をリセット
+    ====================================
     */
 
     document.getElementById(
-
         "quizResult"
-
     ).textContent = "";
 
     /*
-    ボタン切替
+    ====================================
+    ボタン表示をリセット
+    ====================================
     */
 
     document.getElementById(
-
         "checkAnswerBtn"
-
-    ).style.display = "inline-block";
+    ).style.display =
+        "inline-block";
 
     document.getElementById(
-
         "nextQuestionBtn"
-
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 }
 /*
@@ -277,61 +330,88 @@ function showQuestion() {
 
 function checkAnswer() {
 
-    const settings =
-
-        getQuizSettings();
+    /*
+    ====================================
+    現在の問題を取得
+    ====================================
+    */
 
     const question =
-
         quizData[currentQuestion];
 
     /*
-    正解取得
+    ====================================
+    設定を取得
+    ====================================
     */
 
-    const correctAnswer =
+    const settings =
+        getQuizSettings();
+
+    /*
+    ====================================
+    正解を決定
+    ====================================
+    */
+
+    let correctAnswer = "";
+
+    if (
 
         settings.direction === "jpToEn"
 
-        ?
+    ) {
 
-        question.english
+        correctAnswer =
+            question.question;
 
-        :
+    }
 
-        question.japanese;
+    else {
+
+        correctAnswer =
+            question.answer;
+
+    }
 
     /*
-    入力取得
+    ====================================
+    ユーザーの回答を取得
+    ====================================
     */
 
-    const userAnswer =
+    const answerBox =
+        document.getElementById(
+            "quizAnswer"
+        );
 
-        document
-            .getElementById("quizAnswer")
-            .value;
+    const userAnswer =
+        answerBox.value;
 
     /*
-    判定
+    ====================================
+    正誤判定
+    ====================================
     */
 
     if (
 
         isCorrectAnswer(
-
             userAnswer,
-
             correctAnswer
-
         )
 
     ) {
 
+        /*
+        正解
+        */
+
         score++;
 
-        document
-            .getElementById("quizResult")
-            .innerHTML =
+        document.getElementById(
+            "quizResult"
+        ).innerHTML =
 
             "⭕ 正解！";
 
@@ -339,29 +419,30 @@ function checkAnswer() {
 
     else {
 
+        /*
+        不正解
+        */
+
         mistakes.push({
 
             question:
 
                 settings.direction === "jpToEn"
 
-                ?
+                    ? question.answer
+                    : question.question,
 
-                question.japanese
+            correct:
+                correctAnswer,
 
-                :
-
-                question.english,
-
-            correct: correctAnswer,
-
-            answer: userAnswer
+            answer:
+                userAnswer
 
         });
 
-        document
-            .getElementById("quizResult")
-            .innerHTML =
+        document.getElementById(
+            "quizResult"
+        ).innerHTML =
 
             `
             ❌ 不正解<br>
@@ -371,16 +452,20 @@ function checkAnswer() {
     }
 
     /*
-    ボタン切替
+    ====================================
+    ボタン切り替え
+    ====================================
     */
 
-    document
-        .getElementById("checkAnswerBtn")
-        .style.display = "none";
+    document.getElementById(
+        "checkAnswerBtn"
+    ).style.display =
+        "none";
 
-    document
-        .getElementById("nextQuestionBtn")
-        .style.display = "inline-block";
+    document.getElementById(
+        "nextQuestionBtn"
+    ).style.display =
+        "inline-block";
 
 }
 
@@ -392,12 +477,21 @@ function checkAnswer() {
 
 function nextQuestion() {
 
+    /*
+    次の問題へ
+    */
+
     currentQuestion++;
+
+    /*
+    ====================================
+    最後まで終わった場合
+    ====================================
+    */
 
     if (
 
         currentQuestion >=
-
         quizData.length
 
     ) {
@@ -407,6 +501,12 @@ function nextQuestion() {
         return;
 
     }
+
+    /*
+    ====================================
+    次の問題を表示
+    ====================================
+    */
 
     showQuestion();
 
@@ -419,91 +519,130 @@ function nextQuestion() {
 
 function showResult() {
 
-    document.getElementById("quizScreen").style.display = "none";
-
-    document.getElementById("resultScreen").style.display = "block";
-
     /*
-    得点
+    ====================================
+    テスト画面を非表示
+    ====================================
     */
 
     document.getElementById(
-
-        "resultScore"
-
-    ).textContent =
-
-        score + " / " + quizData.length;
+        "quizScreen"
+    ).style.display = "none";
 
     /*
+    ====================================
+    結果画面を表示
+    ====================================
+    */
+
+    document.getElementById(
+        "resultScreen"
+    ).style.display = "block";
+
+    /*
+    ====================================
+    得点
+    ====================================
+    */
+
+    document.getElementById(
+        "resultScore"
+    ).textContent =
+
+        score +
+        " / " +
+        quizData.length;
+
+    /*
+    ====================================
     正答率
+    ====================================
     */
 
     const rate =
 
-        Math.round(
+        quizData.length > 0
 
-            score / quizData.length * 100
+            ? Math.round(
+                score /
+                quizData.length *
+                100
+            )
 
-        );
+            : 0;
 
     document.getElementById(
-
         "resultRate"
-
     ).textContent =
 
-        "正答率 " + rate + "%";
+        "正答率 " +
+        rate +
+        "%";
 
     /*
+    ====================================
     間違えた問題
+    ====================================
     */
 
     const list =
-
         document.getElementById(
-
             "mistakeList"
-
         );
 
     list.innerHTML = "";
 
+    /*
+    全問正解
+    */
+
     if (mistakes.length === 0) {
 
         list.innerHTML =
-
             "<p>🎉 全問正解です！</p>";
 
-    }
-
-    else {
-
-        mistakes.forEach(item => {
-
-            const div =
-
-                document.createElement("div");
-
-            div.className = "mistakeCard";
-
-            div.innerHTML =
-
-                `
-                <p><b>問題</b><br>${item.question}</p>
-
-                <p><b>あなたの答え</b><br>${item.answer || "（未入力）"}</p>
-
-                <p><b>正解</b><br>${item.correct}</p>
-
-                <hr>
-                `;
-
-            list.appendChild(div);
-
-        });
+        return;
 
     }
+
+    /*
+    間違えた問題を表示
+    */
+
+    mistakes.forEach(item => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "mistakeCard";
+
+        div.innerHTML =
+
+            `
+            <p>
+                <b>問題</b><br>
+                ${item.question}
+            </p>
+
+            <p>
+                <b>あなたの答え</b><br>
+                ${item.answer || "（未入力）"}
+            </p>
+
+            <p>
+                <b>正解</b><br>
+                ${item.correct}
+            </p>
+
+            <hr>
+            `;
+
+        list.appendChild(div);
+
+    });
 
 }
 
@@ -515,13 +654,23 @@ function showResult() {
 
 function retryQuiz() {
 
+    /*
+    結果画面を非表示
+    */
+
     document.getElementById(
-
         "resultScreen"
-
     ).style.display = "none";
 
+    /*
+    テスト画面を表示
+    */
+
     showQuiz();
+
+    /*
+    テストを初期化
+    */
 
     initializeQuiz(
 
@@ -546,15 +695,15 @@ window.addEventListener(
     () => {
 
         /*
+        ====================================
         答え合わせ
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "checkAnswerBtn"
-
             )
 
             .addEventListener(
@@ -566,15 +715,15 @@ window.addEventListener(
             );
 
         /*
-        次へ
+        ====================================
+        次の問題
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "nextQuestionBtn"
-
             )
 
             .addEventListener(
@@ -586,15 +735,15 @@ window.addEventListener(
             );
 
         /*
+        ====================================
         Enterキー対応
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "quizAnswer"
-
             )
 
             .addEventListener(
@@ -602,6 +751,10 @@ window.addEventListener(
                 "keydown",
 
                 function(event) {
+
+                    /*
+                    Enter以外は何もしない
+                    */
 
                     if (
 
@@ -615,18 +768,20 @@ window.addEventListener(
 
                     event.preventDefault();
 
+                    /*
+                    次の問題ボタンが表示中なら
+                    次の問題へ
+                    */
+
                     const nextVisible =
 
                         document
 
                             .getElementById(
-
                                 "nextQuestionBtn"
-
                             )
 
                             .style.display
-
                             !== "none";
 
                     if (nextVisible) {
@@ -646,15 +801,15 @@ window.addEventListener(
             );
 
         /*
-        リトライ
+        ====================================
+        もう一度挑戦
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "retryQuizBtn"
-
             )
 
             .addEventListener(
@@ -666,35 +821,41 @@ window.addEventListener(
             );
 
         /*
-        編集へ戻る
+        ====================================
+        編集画面へ戻る
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "returnEditorBtn"
-
             )
 
             .addEventListener(
 
                 "click",
 
-                () => showEditor(currentNotebook)
+                () => {
+
+                    showEditor(
+                        currentNotebook
+                    );
+
+                }
 
             );
 
         /*
+        ====================================
         ホームへ戻る
+        ====================================
         */
 
         document
 
             .getElementById(
-
                 "returnHomeBtn"
-
             )
 
             .addEventListener(
