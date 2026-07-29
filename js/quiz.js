@@ -41,34 +41,81 @@ function initializeQuiz(notebook, settings) {
     mistakes = [];
 
     /*
-    ====================================
-    問題データを作成
-    ====================================
-    */
+====================================
+問題データ作成
+====================================
+*/
 
-    quizData = [...notebook.words];
+switch (settings.questionType) {
 
     /*
-    ====================================
-    問題がない場合
-    ====================================
+    ----------------------------
+    単語のみ
+    ----------------------------
     */
 
-    if (quizData.length === 0) {
+    case "words":
 
-        document.getElementById(
-            "quizQuestion"
-        ).textContent =
-            "問題がありません。";
+        quizData = [...notebook.words];
 
-        document.getElementById(
-            "quizProgress"
-        ).textContent =
-            "問題 0 / 0";
+        break;
 
-        return;
+    /*
+    ----------------------------
+    文章のみ
+    ----------------------------
+    */
 
-    }
+    case "sentences":
+
+        quizData = [...notebook.sentences];
+
+        break;
+
+    /*
+    ----------------------------
+    両方
+    ----------------------------
+    */
+
+    case "both":
+
+        quizData = [
+
+            ...notebook.words,
+
+            ...notebook.sentences
+
+        ];
+
+        break;
+
+    /*
+    ----------------------------
+    保険
+    ----------------------------
+    */
+
+    default:
+
+        quizData = [...notebook.words];
+
+}
+    /*
+====================================
+問題がない場合
+====================================
+*/
+
+if (quizData.length === 0) {
+
+    alert("この条件で出題できる問題がありません。");
+
+    showQuizSettings();
+
+    return;
+
+}
 
     /*
     ====================================
