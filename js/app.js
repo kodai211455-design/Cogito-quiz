@@ -676,28 +676,6 @@ window.addEventListener(
 
             );
 
-        document
-
-            .getElementById(
-
-                "backToEditorBtn"
-
-            )
-
-            .addEventListener(
-
-                "click",
-
-                () =>
-
-                    showEditor(
-
-                        currentNotebook
-
-                    )
-
-            );
-
         /*
         ================================
         編集機能
