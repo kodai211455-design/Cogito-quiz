@@ -108,6 +108,10 @@ const answer = parts[1].trim();
     return result;
 
 }
+
+const SEPARATOR = "|||";
+const parts = line.split(SEPARATOR);
+
 /*
 ====================================
 単語読み込み
