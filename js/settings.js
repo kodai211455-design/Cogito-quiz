@@ -18,6 +18,8 @@ let quizSettings = {
 
     hintMode: "none",
 
+    questionType: "words",
+
     questionCount: 10,
 
     shuffle: true
@@ -81,6 +83,19 @@ function readSettings() {
             "input[name='hintMode']:checked"
 
         ).value;
+    /*
+====================================
+出題内容
+====================================
+*/
+
+quizSettings.questionType =
+
+    document.querySelector(
+
+        "input[name='questionType']:checked"
+
+    ).value;
 
     /*
     問題数
