@@ -34,21 +34,83 @@ let quizSettings = {
 
 function initializeSettings(notebook) {
 
+    currentNotebook = notebook;
+
+    updateQuestionCountLimit();
+
+}
+
+/*
+====================================
+問題数更新
+====================================
+*/
+
+function updateQuestionCountLimit() {
+
+    if (!currentNotebook) {
+
+        return;
+
+    }
+
+    const questionType =
+
+        document.querySelector(
+
+            "input[name='questionType']:checked"
+
+        ).value;
+
+    let maxQuestions = 0;
+
+    switch (questionType) {
+
+        case "words":
+
+            maxQuestions =
+                currentNotebook.words.length;
+
+            break;
+
+        case "sentences":
+
+            maxQuestions =
+                currentNotebook.sentences.length;
+
+            break;
+
+        case "both":
+
+            maxQuestions =
+                currentNotebook.words.length +
+                currentNotebook.sentences.length;
+
+            break;
+
+    }
+
+    const questionCount =
+
+        document.getElementById("questionCount");
+
+    questionCount.max = maxQuestions;
+
     /*
-    問題数の最大値
+    現在値が範囲外なら補正
     */
 
-    document
-        .getElementById("questionCount")
-        .max = notebook.words.length;
+    if (
 
-    /*
-    問題数初期値
-    */
+        Number(questionCount.value) > maxQuestions ||
 
-    document
-        .getElementById("questionCount")
-        .value = notebook.words.length;
+        Number(questionCount.value) < 1
+
+    ) {
+
+        questionCount.value = maxQuestions;
+
+    }
 
 }
 
