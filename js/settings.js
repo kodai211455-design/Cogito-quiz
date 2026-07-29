@@ -312,6 +312,30 @@ window.addEventListener(
 
         }
 
+        /*
+        出題内容変更
+        */
+
+        document
+
+            .querySelectorAll(
+
+                "input[name='questionType']"
+
+            )
+
+            .forEach(radio => {
+
+                radio.addEventListener(
+
+                    "change",
+
+                    updateQuestionCountLimit
+
+                );
+
+            });
+
     }
 
 );
