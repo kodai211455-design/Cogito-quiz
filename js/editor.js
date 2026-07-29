@@ -21,17 +21,17 @@ function initializeEditor(notebook) {
         .getElementById("notebookTitle")
         .value = notebook.title;
 
-    document
-        .getElementById("wordInput")
-        .value = notebook.words
-            .map(item => `${item.question},${item.answer}`)
-            .join("\n");
+document
+    .getElementById("wordInput")
+    .value = notebook.words
+        .map(item => `${item.question}|||${item.answer}`)
+        .join("\n");
 
-    document
-        .getElementById("sentenceInput")
-        .value = notebook.sentences
-            .map(item => `${item.question},${item.answer}`)
-            .join("\n");
+document
+    .getElementById("sentenceInput")
+    .value = notebook.sentences
+        .map(item => `${item.question}|||${item.answer}`)
+        .join("\n");
 
     updateWordPreview();
 
@@ -67,26 +67,22 @@ function parseLines(text) {
 
         }
 
-        /*
-        最初のカンマだけ区切りにする
-        */
+/*
+区切り文字「|||」で分割
+*/
 
-        const comma = line.indexOf(",");
+const parts = line.split("|||");
 
-        if (comma === -1) {
+if (parts.length !== 2) {
 
-            return;
+    return;
 
-        }
+}
 
-        const question =
+const question = parts[0].trim();
 
-            line.substring(0, comma).trim();
-
-        const answer =
-
-            line.substring(comma + 1).trim();
-
+const answer = parts[1].trim();
+        
         if (
 
             question === "" ||
