@@ -184,14 +184,73 @@ function saveSettings() {
 
     readSettings();
 
-    /*
-    問題数チェック
-    */
+   /*
+問題数チェック
+*/
 
-    const maxQuestions =
+let maxQuestions = 0;
 
-        currentNotebook.words.length;
+switch (quizSettings.questionType) {
 
+    case "words":
+
+        maxQuestions =
+            currentNotebook.words.length;
+
+        break;
+
+    case "sentences":
+
+        maxQuestions =
+            currentNotebook.sentences.length;
+
+        break;
+
+    case "both":
+
+        maxQuestions =
+            currentNotebook.words.length +
+            currentNotebook.sentences.length;
+
+        break;
+
+}
+
+if (
+
+    isNaN(quizSettings.questionCount)
+
+) {
+
+    quizSettings.questionCount =
+
+        maxQuestions;
+
+}
+
+if (
+
+    quizSettings.questionCount < 1
+
+) {
+
+    quizSettings.questionCount = 1;
+
+}
+
+if (
+
+    quizSettings.questionCount >
+
+    maxQuestions
+
+) {
+
+    quizSettings.questionCount =
+
+        maxQuestions;
+
+}
     if (
 
         isNaN(quizSettings.questionCount)
