@@ -53,43 +53,33 @@ function updateQuestionCountLimit() {
         return;
 
     }
+let maxQuestions = 0;
 
-    const questionType =
+switch (quizSettings.questionType) {
 
-        document.querySelector(
+    case "words":
 
-            "input[name='questionType']:checked"
+        maxQuestions =
+            currentNotebook.words.length;
 
-        ).value;
+        break;
 
-    let maxQuestions = 0;
+    case "sentences":
 
-    switch (questionType) {
+        maxQuestions =
+            currentNotebook.sentences.length;
 
-        case "words":
+        break;
 
-            maxQuestions =
-                currentNotebook.words.length;
+    case "both":
 
-            break;
+        maxQuestions =
+            currentNotebook.words.length +
+            currentNotebook.sentences.length;
 
-        case "sentences":
+        break;
 
-            maxQuestions =
-                currentNotebook.sentences.length;
-
-            break;
-
-        case "both":
-
-            maxQuestions =
-                currentNotebook.words.length +
-                currentNotebook.sentences.length;
-
-            break;
-
-    }
-
+}
     const questionCount =
 
         document.getElementById("questionCount");
