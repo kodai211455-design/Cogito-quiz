@@ -20,6 +20,9 @@ let score = 0;
 
 let mistakes = [];
 
+// 復習モードかどうか
+let isReviewMode = false;
+
 /*
 ====================================
 テスト初期化
@@ -34,11 +37,14 @@ function initializeQuiz(notebook, settings) {
     ====================================
     */
 
-    currentQuestion = 0;
+   currentQuestion = 0;
 
-    score = 0;
+score = 0;
 
-    mistakes = [];
+mistakes = [];
+
+// 通常テストとして開始
+isReviewMode = false;
 
     /*
 ====================================
@@ -472,21 +478,24 @@ function checkAnswer() {
 
         mistakes.push({
 
-            question:
+    // 元の問題データ（復習用）
+    data: { ...question },
 
-                settings.direction === "jpToEn"
+    // 結果画面に表示する問題文
+    question:
+        settings.direction === "jpToEn"
+            ? question.answer
+            : question.question,
 
-                    ? question.answer
-                    : question.question,
+    // 正解
+    correct:
+        correctAnswer,
 
-            correct:
-                correctAnswer,
+    // 自分の回答
+    answer:
+        userAnswer
 
-            answer:
-                userAnswer
-
-        });
-
+});
         document.getElementById(
             "quizResult"
         ).innerHTML =
@@ -591,7 +600,16 @@ function showResult() {
     得点
     ====================================
     */
+    
+    // 結果画面のタイトルを切り替える
+    const resultTitle =
+        document.querySelector("#resultScreen h2");
 
+    if (resultTitle) {
+        resultTitle.textContent = isReviewMode
+            ? "🔁 復習テストの結果"
+            : "🎉 テスト結果";
+    }
     document.getElementById(
         "resultScore"
     ).textContent =
@@ -599,6 +617,17 @@ function showResult() {
         score +
         " / " +
         quizData.length;
+    
+    // 復習する問題がなければ復習ボタンを隠す
+    const reviewButton =
+        document.getElementById("reviewMistakesBtn");
+
+    if (reviewButton) {
+        reviewButton.style.display =
+            mistakes.length > 0
+                ? "inline-block"
+                : "none";
+    }
 
     /*
     ====================================
@@ -695,38 +724,68 @@ function showResult() {
 
 /*
 ====================================
+間違えた問題だけ復習
+====================================
+*/
+
+function reviewMistakes() {
+
+    // 間違えた問題がない場合
+    if (mistakes.length === 0) {
+        alert("復習する問題がありません！");
+        return;
+    }
+
+    // 復習対象をコピーしておく
+    const reviewData = mistakes.map(
+        item => ({ ...item.data })
+    );
+
+    // テスト状態をリセット
+    quizData = reviewData;
+    currentQuestion = 0;
+    score = 0;
+    mistakes = [];
+
+    // 復習モードにする
+    isReviewMode = true;
+
+    // テスト画面を表示
+    showQuiz();
+
+    // 復習用のタイトルを設定
+    document.getElementById(
+        "quizTitle"
+    ).textContent = "🔁 間違えた問題の復習";
+
+    // 最初の問題を表示
+    showQuestion();
+}
+
+/*
+====================================
 もう一度挑戦
 ====================================
 */
 
 function retryQuiz() {
 
-    /*
-    結果画面を非表示
-    */
-
+    // 結果画面を非表示
     document.getElementById(
         "resultScreen"
     ).style.display = "none";
 
-    /*
-    テスト画面を表示
-    */
+    // 通常テストとしてやり直す
+    isReviewMode = false;
 
+    // テスト画面を表示
     showQuiz();
 
-    /*
-    テストを初期化
-    */
-
+    // 現在の範囲・設定でテストを初期化
     initializeQuiz(
-
         currentNotebook,
-
         getQuizSettings()
-
     );
-
 }
 
 /*
@@ -865,6 +924,19 @@ window.addEventListener(
 
                 retryQuiz
 
+            );
+        
+        /*
+        ====================================
+        間違えた問題だけ復習
+        ====================================
+        */
+
+        document
+            .getElementById("reviewMistakesBtn")
+            .addEventListener(
+                "click",
+                reviewMistakes
             );
 
         /*
